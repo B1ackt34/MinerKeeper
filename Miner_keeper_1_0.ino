@@ -23,14 +23,16 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // =================================================================================================
-//                                   ----------------------
-//                                        Miner Keeper
-//                                   ----------------------
+//                        ----------------------
+//                             Miner Keeper
+//                        ----------------------
+//
+// Github : 
+// https://github.com/B1ackt34/MinerKeeper
+//
 // Description:
 // Miner Keeper is an hardware watchdog designed to protect your miner from malfunctions or failures
-// This project is developed by Blacktea @ BitsFromItaly.it
-//
-// Website : https://www.minerkeeper.org
+// This project is developed by Blacktea of BitsFromItaly.it
 // 
 // Target Board: ESP32 Dev Module
 // Compilation: Tested with ESP32 on Arduino IDE version 2.3.4//
@@ -72,7 +74,7 @@
 
 // ---------------------------------------------------- Miner Keeper version
 
-const char * versione = "0.2.28";                                    // software versione
+const char * versione = "1.0";                                    // software versione
 String nomeMiner;                                                    // miner name
 
 // ---------------------------------------------------- SMTP service and alarms
@@ -83,8 +85,8 @@ String serverMail ;
 int serverPort ;
 String passwordServer;
 String walletAddress = "";
-char * poolName = "";
-String cointype = "";
+char * poolName = "null";
+String cointype = "null";
 String mineremail = "";
 String minerpass = "";
 int ack = 0;
@@ -159,6 +161,7 @@ bool portalfirstrun = false;
   boolean TSstate = false;
   long unsigned int myChannelNumber;
   char ch_TSapi[19];
+  String statusTS = "pool:null;coin:null" ;
 
 
 // --------------------------------------------------- voltmeter ammeter + power supply measurements
@@ -201,7 +204,7 @@ void ConfigPortalVoid();
 void AirValveCallback(const char* posAir);
 std::vector<const char*> fanspeeds = {"AUTO", "25%", "50%", "75%", "100%"};
 void PoolsCallback(const char* posPools);
-std::vector<const char*> PoolsPos = {"none", "Vipor", "Zerg", "Wooly", "Rplant"};
+std::vector<const char*> PoolsPos = {"none", "Vipor", "Zerg", "Wooly", "Rplant", "Zsolo"};
 void fanspeedsCallback(const char* posFans);
 std::vector<const char*> airValvePos = {"AUTO", "IN", "OUT"};
 void viewAlarms();
@@ -243,7 +246,7 @@ int splash = 0;
 
 // --------------------------------------------------- OneWire temperature probes
   
-  #define ONE_WIRE_BUS 32                             // Temperature probe pins
+  #define ONE_WIRE_BUS 32                             // Temperature probe pin
   OneWire oneWire(ONE_WIRE_BUS);
   DallasTemperature sensors(&oneWire);
   DeviceAddress airIncoming, airMiner, airOutgoing;
@@ -279,7 +282,7 @@ int splash = 0;
 
 // --------------------------------------------------- fans
 
-  const int pinFans = 23;
+  const int pinFans = 26;
   int freqFan = 768;
   int pinChannel = 0;
   const int resolution = 10;
@@ -444,9 +447,6 @@ void setup() {
     delay(2000);
     lcd.clear();
   }
-
-  // I start pools
-
   
   // I start Thingspeak
   ThingSpeak.begin(client);
@@ -455,14 +455,6 @@ void setup() {
   timeClient.begin();
   timeClient.update();  // aggiorno l'ora
   Serial.println(timeClient.getFormattedTime());
-  // I check if I used the configuration portal
-  /*if(portalfirstrun){
-    lcd.clear();
-    lcd.setCursor(3, 1);
-    lcd.print("Restarting");
-    delay(1000);
-    ESP.restart();
-  }*/
   
   // I start email service
   MailClient.networkReconnect(true);
@@ -496,8 +488,6 @@ void loop() {
     wifiManager.process();
   }
 
-  
-
   // ---------------------------------------------------------- Stop Info screen  -----------------------------------------------------------------------
 
     if ((splash == 1) && (encoder.rotate() == 1)) {
@@ -506,7 +496,9 @@ void loop() {
     lcd.clear();
     menu.show();
   }
+
   // --------------------- I read the temperatures of the probes, I measure the voltages and if necessary I send them to Thingspeak ---------------------
+
   unsigned long ariaTime = millis();
 
   if (splash == 0) {
@@ -554,6 +546,8 @@ void loop() {
       ThingSpeak.setField(5, energy);
       ThingSpeak.setField(6, rpmFans);
       ThingSpeak.setField(7, hashrateTS);
+      statusTS = "pool:" + String(poolName) + ";coin:" + cointype ;  // "[""coin"","",nexa""][""pool"",""Zerg""]" poolName   cointype    "https://pool.rplant.xyz/api/walletEx/" + cointype + "/" + walletAddress + "/" + minerpass ;
+      ThingSpeak.setStatus(statusTS);
       delay(50);
       int xTS = ThingSpeak.writeFields(myChannelNumber, ch_TSapi);
       if(xTS == 200){
@@ -569,8 +563,10 @@ void loop() {
     valoreFIAMMA = digitalRead(sensoreFIAMMA);
 
     if (valoreFIAMMA == LOW) {                      // in case of flame
-      sendEmail (Alarm_fires, Alarm_fire_text);     // I send email
-      alarmFire = true;
+      if (!alarmFire) {
+        sendEmail (Alarm_fires, Alarm_fire_text);     // I send email
+        alarmFire = true;
+      }
       lcd.setCursor(19, 3);
       lcd.write(byte(7));
       if(posizione == 1){                           // I move the air valve to expel any fumes
@@ -643,7 +639,7 @@ void splashInfo() {
   lcd.setCursor(12, 1);
   lcd.print("C");
 
-  lcd.setCursor(18, 1);
+  lcd.setCursor(18, 0);
   if (posizione==0) {
     lcd.write(byte(3));
   } else {
@@ -724,6 +720,10 @@ void showAlarmIcons() {
     lcd.setCursor(19, 2);
     lcd.write(byte(4));
   }
+  if (alarmFire) {
+    lcd.setCursor(19, 3);
+    lcd.write(byte(7));
+  }
 }
 
 void iconAirValve() {
@@ -784,8 +784,10 @@ void letturaVoltaggi() {
   float media12 = 0.00;
   for(int c12=0; c12<=9; c12++) {
     vin12 = analogRead(pin12volt);
+    Serial.print("misura 12 volt: ");
+    Serial.println(vin12);
     tempvin12 = (vin12 * 3.3) / 4095.0; //1,874432
-    misura12 = tempvin12 / 0.156;
+    misura12 = tempvin12 / 0.177;
     misurazione12[c12] = misura12;
     somma12 = somma12 + misurazione12[c12];
     delay(1);
@@ -795,8 +797,10 @@ void letturaVoltaggi() {
     int media12temp = media12*100;
     if ((media12temp < 1140) || (media12temp > 1260)){
       delay(50);
-      alarmVolt = true;
-      sendEmail (Alarm_volts, Alarm_volt_text);
+      if (!alarmVolt) {
+        sendEmail (Alarm_volts, Alarm_volt_text);
+        alarmVolt = true;
+      }
     }
   }
   float misurazione5[10] = {};
@@ -804,8 +808,10 @@ void letturaVoltaggi() {
   float media5 = 0.00;
   for(int c5=0; c5<=9; c5++) {
     vin5 = analogRead(pin5volt);
+    Serial.print("misura 5 volt: ");
+    Serial.println(vin5);
     tempvin5 = (vin5 * 3.3) / 4095.0; //1,874432
-    misura5 = tempvin5 / 0.194;
+    misura5 = tempvin5 / 0.234;
     misurazione5[c5] = misura5;
     somma5 = somma5 + misurazione5[c5];
     delay(1);
@@ -815,8 +821,10 @@ void letturaVoltaggi() {
     int media5temp = media5 * 100;
     if ((media5temp < 475) || (media5temp > 550)){
       delay(50);
-      alarmVolt = true;
-      sendEmail (Alarm_volts, Alarm_volt_text);
+      if (!alarmVolt) {
+        sendEmail (Alarm_volts, Alarm_volt_text);
+        alarmVolt = true;
+      }
     }
   }
   float misurazione33[10] = {};
@@ -824,8 +832,10 @@ void letturaVoltaggi() {
   float media33 = 0.00;
   for(int c33=0; c33<=9; c33++) {
     vin33 = analogRead(pin33volt);
+    Serial.print("misura 3.3 volt: ");
+    Serial.println(vin33);
     tempvin33 = (vin33 * 3.3) / 4095.0; //1,874432
-    misura33 = tempvin33 / 0.28;
+    misura33 = tempvin33 / 0.317;
     misurazione33[c33] = misura33;
     somma33 = somma33 + misurazione33[c33];
     delay(1);
@@ -835,8 +845,10 @@ void letturaVoltaggi() {
     int media33temp = media33*100;
     if ((media33temp < 315) || (media33temp > 345)){
       delay(50);
-      alarmVolt = true;
-      sendEmail (Alarm_volts, Alarm_volt_text);
+      if (!alarmVolt) {
+        sendEmail (Alarm_volts, Alarm_volt_text);
+        alarmVolt = true;
+      }
     }
   }
 }
@@ -1400,6 +1412,10 @@ void PoolsCallback(const char* posPools) {
       poolSelected = "4";
       poolName = "Rplant";
     }
+    if (posPools == "Zsolo"){
+      poolSelected = "5";
+      poolName = "Zsolo";
+    }
 }
 
 void readPool() {
@@ -1461,16 +1477,19 @@ void callPool(String reason, const char* poolchosen) {
   Serial.println("punto 1");
   HTTPClient http;
   if (poolchosen == "1") {
-      poolAddressAPI = "https://restapi.vipor.net/api/pools/nexa/miners/" + walletAddress ;
+      poolAddressAPI = "https://restapi.vipor.net/api/pools/" + cointype + "/miners/" + walletAddress ;
     }
   if (poolchosen == "2") {
       poolAddressAPI = "https://zergpool.com/api/walletEx?address=" + walletAddress ;
     }
   if (poolchosen == "3") {
-      poolAddressAPI = "https://api.woolypooly.com/api/" + cointype + "-1/accounts/" + walletAddress ; // nexa-1/accounts/
+      poolAddressAPI = "https://api.woolypooly.com/api/" + cointype + "-1/accounts/" + walletAddress ;
     }
   if (poolchosen == "4") {
-      poolAddressAPI = "https://pool.rplant.xyz/api/walletEx/" + cointype + "/" + walletAddress + "/" + minerpass ;  ///api/wallet/koto/k16WgTvSLLvLDG64JZVocVJu4YvTuQNUj1s/pwd123
+      poolAddressAPI = "https://pool.rplant.xyz/api/walletEx/" + cointype + "/" + walletAddress + "/" + minerpass ;  // /api/wallet/koto/k16WgTvSLLvLDG64JZVocVJu4YvTuQNUj1s/pwd123
+    }
+  if (poolchosen == "5") {
+      poolAddressAPI = "https://zsolo.bid/api/public/user/" + cointype + "?address=" + walletAddress ;  // https://zsolo.bid/api/public/user/btc?address=1PS1wbFki6qH3AepVW6NRjaoTEdWnSZ3kD
     }
   http.begin(poolAddressAPI);
   Serial.print("api query: ");
@@ -1508,6 +1527,12 @@ void callPool(String reason, const char* poolchosen) {
           //currency = docPool["coin"];
           hashrateTS=  docPool["hashrate"];
         }
+        if (poolchosen == "5") {  // ok
+          balance = docPool["balance"];
+          paidtotal = docPool["blocks"];
+          //currency = docPool["coin"];
+          hashrateTS=  docPool["hashrate"];
+        }
         Serial.println("punto 3");
         if (reason == "menuMode") {
           lcd.clear();
@@ -1523,8 +1548,13 @@ void callPool(String reason, const char* poolchosen) {
           lcd.print("Bal: ");
           lcd.print(balance);
           lcd.setCursor(0, 3);
-          lcd.print("Paid: ");
-          lcd.print(paidtotal);
+          if (poolchosen == "5") {
+            lcd.print("Blocks: ");
+            lcd.print(paidtotal);
+          } else {
+            lcd.print("Paid: ");
+            lcd.print(paidtotal);
+          }
           delay(5000);
           lcd.clear();
           menu.show();
