@@ -1,6 +1,5 @@
 
-![logo viola small](![new LOGO](https://github.com/user-attachments/assets/999e0a21-0274-4c20-89f9-93379337ea51)
-https://github.com/user-attachments/assets/11218be2-6ee4-4e5a-b032-7c3cb4e3bc65)
+![new LOGO 150](https://github.com/user-attachments/assets/05263306-5faf-41b9-ad83-11f20b9029f3)
 
 Miner Keeper
 -----------------------
