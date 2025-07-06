@@ -7,6 +7,8 @@ Miner Keeper
 Description:
 Miner Keeper is an hardware watchdog designed to protect your miner from malfunctions or failures.
 
+This watchdog is usable on GPU and ASIC miners
+
 Features and benefits:
 
 - Internet connection via wifi
@@ -20,8 +22,8 @@ Features and benefits:
 - Valve for air controlled by a servomotor
 - Flame detection sensor
 - Email messaging system
-- System power connector (MOLEX or SATA type) with voltage measurement circuit
-- Dedicated Android app
+- System power connector (MOLEX type) with voltage measurement circuit
+- Dedicated Android app ( Miner Voyeur )
 
 This project is developed by Blacktea of BitsFromItaly.it
 
