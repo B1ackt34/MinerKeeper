@@ -23,7 +23,7 @@ Features and benefits:
 - Telegram notifications
 - Whatsapp notifications
 - System power connector (MOLEX type) with voltage measurement circuit
-- Dedicated Android app with dedicated wizard setup to configure hardware and get live-data
+- Dedicated Android app supporting wizard setup to configure hardware and get live-data
 
 This project is developed by Blacktea from BitsFromItaly.it
 
