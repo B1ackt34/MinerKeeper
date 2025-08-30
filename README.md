@@ -14,18 +14,18 @@ Features and benefits:
 - Internet connection via wifi
 - Access Point functions in the absence of wifi
 - Browser-based configuration menu
-- Presence of a 20*4 display on which the usage menu is displayed
-- Presence of a rotary encoder to navigate the menu and select the functions
 - Temperature probes to measure the temperature of the miner and the incoming/outgoing air
 - Sensor for measuring the ambient temperature
 - Module for measuring input voltage, absorbed current and electrical energy used
 - Valve for air controlled by a servomotor
 - Flame detection sensor
 - Email messaging system
+- Telegram notifications
+- Whatsapp notifications
 - System power connector (MOLEX type) with voltage measurement circuit
-- Dedicated Android app ( Miner Voyeur )
+- Dedicated Android app with dedicated wizard setup to configure hardware and get live-data
 
-This project is developed by Blacktea of BitsFromItaly.it
+This project is developed by Blacktea from BitsFromItaly.it
 
 Target Board: ESP32 Dev Module
 Compilation: Tested with ESP32 on Arduino IDE version 2.3.4
