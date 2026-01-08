@@ -33,6 +33,6 @@ Compilation: Tested with ESP32 on Arduino IDE version 2.3.4
 You can contribute to the development of the project by donating coins to the following addresses
 
 - NEXA nexa:nqtsq5g5k93k6xpljm03kwrzvqznpdltr506edyv27ylg7fj
-- BTC 1PS1wbFki6qH3AepVW6NRjaoTEdWnSZ3kD
-- KAS kaspa:qpgkwj8d7q2xmhrt4fd0l94gxgwygvtcy0vakec08975jjuqq5wwxzgx7w09z
-- DOGE DTa7UrCQ1WjZaAqRE65vyVkQLNMp5Hex6r
+- BTC 16uwxhsrjpkL2herNE1UBY9wbnKdNqtAhd
+- KAS kaspa:qq8va2lly9cxu2ydcjpsjd05hpdaplyytry79yfn8kesqu4x93axzzdd2c3gq
+- DOGE DKsnrSNLPcMwrufxEVKieTKbF7LLA7j8jD
