@@ -13,7 +13,7 @@ Features and benefits:
 
 - Internet connection via wifi
 - Access Point functions in the absence of wifi
-- Browser-based configuration menu
+- Android app-based configuration menu via wizard setup
 - Temperature probes to measure the temperature of the miner and the incoming/outgoing air
 - Sensor for measuring the ambient temperature
 - Module for measuring input voltage, absorbed current and electrical energy used
@@ -28,7 +28,7 @@ Features and benefits:
 This project is developed by Blacktea from BitsFromItaly.it
 
 Target Board: ESP32 Dev Module
-Compilation: Tested with ESP32 on Arduino IDE version 2.3.4
+Compilation: Tested with ESP32 on Arduino IDE version 2.3.7
 
 You can contribute to the development of the project by donating coins to the following addresses
 
