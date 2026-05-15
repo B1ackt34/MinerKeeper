@@ -22,8 +22,10 @@ Features and benefits:
 - Email messaging system
 - Telegram notifications
 - Whatsapp notifications
-- System power connector (MOLEX type) with voltage measurement circuit
+- System power connector (SATA type) with voltage measurement circuit
 - Dedicated Android app supporting wizard setup to configure hardware and get live-data
+
+- now MK autodetect mining software without the need to enter personal data
 
 This project is developed by Blacktea from BitsFromItaly.it
 
