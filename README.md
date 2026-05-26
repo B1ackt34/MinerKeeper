@@ -26,7 +26,7 @@ Features and benefits:
 
 - now MK autodetect mining software without the need to enter personal data
 
-This project is developed by Blacktea from BitsFromItaly.it
+This project is developed by Blacktea - BitsFromItaly.it
 
 Target Board: ESP32 Dev Module
 Compilation: Tested with ESP32 on Arduino IDE version 2.3.8
