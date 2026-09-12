@@ -18,10 +18,10 @@ Features and benefits:
 - Module for measuring input voltage, absorbed current and electrical energy used at the wall
 - Valve for air controlled by a servomotor
 - Flame detection sensor
-- Email messaging system
+- Email notifications
 - Telegram notifications
 - Whatsapp notifications
-- System power connector (SATA type) with voltage measurement circuit
+- System power connector with voltage measurement circuit
 - Dedicated Android app supporting wizard setup to configure hardware and get live-data
 
 - now MK autodetect mining software without the need to enter personal data
